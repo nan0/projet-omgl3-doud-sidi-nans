@@ -18,11 +18,7 @@ public class Controleur implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 *  Test du svn sidi
-	 *  ouai bien la famille
-	 */
+
 	/**
 	 * La classe Controleur est unique pour tous les cas d'utilisation
 	 * Elle est également la classe "application" qui gère l'ensemble des objets de l'appli
