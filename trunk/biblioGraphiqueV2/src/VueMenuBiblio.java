@@ -8,6 +8,7 @@ import javax.swing.JMenu;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import javax.swing.JTextPane;
 /**
  * Fenêtre principale de l'application Bibliothèque avec le menu 
  * @author IUT,  A.Culet 
@@ -41,7 +42,6 @@ public class VueMenuBiblio  extends Vue{
 			}
 		});
 		frame.getContentPane().setLayout(null);
-		
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setBounds(44, 24, 188, 21);
 		frame.getContentPane().add(menuBar);
@@ -57,7 +57,7 @@ public class VueMenuBiblio  extends Vue{
 				}		
 		});
 		mnApplication.add(menuItemQuitter);
-		
+	
 		JMenu mnOuvrage = new JMenu("Ouvrage");
 		menuBar.add(mnOuvrage);
 		
@@ -90,6 +90,19 @@ public class VueMenuBiblio  extends Vue{
 		});
 		
 		mnOuvrage.add(menuItemConsult);
+		
+		JMenu mnPeriodique = new JMenu("Periodique");
+		menuBar.add(mnPeriodique);
+		
+		JMenuItem mntmNouveauPeriodique = new JMenuItem("Nouveau periodique");
+		mntmNouveauPeriodique.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				//  affichage de la fenetre de saisie d'un periodique
+				getControleur().saisirPeriodique() ;}
+		});
+	
+		mnPeriodique.add(mntmNouveauPeriodique);
 		frame.setVisible(true);
 	}
 	
@@ -99,5 +112,4 @@ public class VueMenuBiblio  extends Vue{
 	public void windowClosing (WindowEvent e) {
 		getControleur().fermerVue(VueMenuBiblio.this);
 	}
-
 }

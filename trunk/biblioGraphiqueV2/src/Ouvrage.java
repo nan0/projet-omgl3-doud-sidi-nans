@@ -22,7 +22,6 @@ public class Ouvrage extends Observable implements Serializable {
 	// ************************************************************************************************************
 	// Attributs
 	// ************************************************************************************************************
-
 	private String _isbn;
 	private String _titre;
 	private String _auteur;

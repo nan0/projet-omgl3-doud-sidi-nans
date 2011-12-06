@@ -29,6 +29,8 @@ public class Controleur implements Serializable{
 		// Attributs d'Association
 		// Ensemble des ouvrages de la bibliothèque
 		private HashMap<String, Ouvrage> _ouvrages; 
+		// Ensemble des periodiques de la bibliothèque
+		private HashMap<String, Periodique> _periodiques; 
 		
 		// les différentes fenêtres pour chaque fonctionnalité
 		private VueMenuBiblio _vueMenuBiblio = null;
@@ -36,6 +38,7 @@ public class Controleur implements Serializable{
 		// une seule fenêtre est active à la fois; les autres sont à null.
 		// permet de connaître l'état des fenêtres de l'interface
 		private VueSaisieOuvrage _vueSaisieOuvrage = null;
+		private VueSaisiePeriodique _vueSaisiePeriodique = null;
 		private VueSaisieExemplaire _vueSaisieExemplaire = null;
 		private VueConsultOuvrage _vueConsultOuvrage = null;
 		// ************************************************************************************************************
@@ -70,6 +73,22 @@ public class Controleur implements Serializable{
 		}// Fin setOuvrages
 		
 		/**
+		 * Ajoute un Periodique à l'ensemble des periodiques de la bibliothèque.
+		 * @param periodique periodique à ajouter
+		 * @param issn 	code ISSN de cet ouvrage
+		 */
+		private void setPeriodique(Periodique periodique, String issn) {
+			this.getPeriodiques().put(issn, periodique);
+		} // Fin setPeriodique
+
+		/**
+		 * @param periodiques hashtable de periodique à affecter
+		 */
+		private void setPeriodiques(HashMap<String, Periodique> periodiques) {
+			_periodiques = periodiques;
+		}// Fin setPeriodiques
+		
+		/**
 		 * @param vue  la vue à affecter
 		 */
 		private void setVueMenuBiblio(VueMenuBiblio vue) {
@@ -78,6 +97,10 @@ public class Controleur implements Serializable{
 		
 		private void setVueSaisieOuvrage(VueSaisieOuvrage vue) {
 			_vueSaisieOuvrage = vue;
+		}// Fin setVueVueSaisieOuvrage
+		
+		private void setVueSaisiePeriodique(VueSaisiePeriodique vue) {
+			_vueSaisiePeriodique = vue;
 		}// Fin setVueVueSaisieOuvrage
 		
 		private void setVueSaisieExemplaire(VueSaisieExemplaire vue) {
@@ -108,6 +131,19 @@ public class Controleur implements Serializable{
 			return this.getOuvrages().get(isbn);
 		} // Fin getOuvrage
 
+		private HashMap<String, Periodique> getPeriodiques() {
+			return _periodiques;
+		}// Fin getPeriodiques
+		
+		/**
+		 * Accès à un Periodique par son numéro ISSN
+		 * @param issn 	le code ISSN du periodique cherché
+		 * @return le periodique qui a l'ISSN indiqué
+		 */
+		private Periodique getPeriodique(String issn) {
+			return this.getPeriodiques().get(issn);
+		} // Fin getPeriodique
+		
 		/**
 		 * @return la vue  
 		 */
@@ -118,6 +154,10 @@ public class Controleur implements Serializable{
 		private VueSaisieOuvrage getVueSaisieOuvrage() {
 			return _vueSaisieOuvrage ;
 		}// Fin getVueVueSaisieOuvrage
+		
+		private VueSaisiePeriodique getVueSaisiePeriodique() {
+			return _vueSaisiePeriodique ;
+		}// Fin getVueVueSaisiePeriodique
 		
 		private VueSaisieExemplaire getVueSaisieExemplaire() {
 			return _vueSaisieExemplaire ;
@@ -137,6 +177,7 @@ public class Controleur implements Serializable{
 		 */
 		
 		public void menuBiblio() {
+
 			try {this.setVueMenuBiblio(new VueMenuBiblio(this));	
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -185,6 +226,20 @@ public class Controleur implements Serializable{
 			e.printStackTrace();
 			}
 		}
+		/**
+		 * Création et affichage de la fenêtre de saisie d'un ouvrage
+		 */
+		public void saisirPeriodique() {
+			try {this.setVueSaisiePeriodique(new VueSaisiePeriodique(this));
+			// le Menu est caché
+			this.getVueMenuBiblio().getFrame().setVisible(false); 
+			// la vue courante est VueSaisiePeridique
+				this.getVueSaisiePeriodique().setEtat(Vue.initiale);
+				this.getVueSaisiePeriodique().setVisible(true);
+			} catch (Exception e) {
+			e.printStackTrace();
+			}
+		}		
 		/**
 		 * fermeture de la fenêtre vue
 		 * lors de la fermeture de la fenêtre principale de l'application sauvegarde des objets sérialisés 
@@ -317,7 +372,7 @@ public class Controleur implements Serializable{
 		} // Fin nouvExemplaire
 		
 		/**
-		 * Création d'un  d'ouvrage 
+		 * Création d'un ouvrage 
 		 * Invoqué dans VueSaisieOuvrage
 		 * @param  dateEdition la date d'édition de l'ouvrage
 		 * affiche un message de confirmation après l'enregistrement ou un message d'erreur 
@@ -345,12 +400,43 @@ public class Controleur implements Serializable{
 					dialog.setVisible(true);
 					this.fermerVue (this.getVueSaisieOuvrage());
 					} 
-					else {
+				else {
 						Message dialog = new Message("Ouvrage déjà présent");
 						dialog.setVisible(true);
-					}
 				}
 			}
-		} // Fin nouvOuvrage
+		}// Fin nouvOuvrage
+		
+		/**
+		 * Création d'un Periodique
+		 * Invoqué dans VueSaisiePeriodique
+		 * affiche un message de confirmation après l'enregistrement ou un message d'erreur 
+		 */
+		public void nouvPeriodique(String issn, String nom) {
+			// vérification de la présence des infos obligatoires
+			if ((issn.length() == 0) || (nom.length() == 0)){
+					Message dialog = new Message("Tous les champs sont obligatoires");
+					dialog.setVisible(true);
+					}
+			else {
+				if (this.getPeriodique(issn)== null) {
+				// Instanciation de l'ouvrage
+					Periodique periodique = new Periodique(issn,nom);
+				// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
+					this.setPeriodique(periodique, issn);
+					
+					Message dialog = new Message("Periodique enregistré");
+					dialog.setVisible(true);
+					this.fermerVue (this.getVueSaisiePeriodique());
+					} 
+				else {
+						Message dialog = new Message("Periodique déjà présent");
+						dialog.setVisible(true);
+				}
+			}
+		}// Fin nouvPeriodique
+	} 
+
+
 		
 
