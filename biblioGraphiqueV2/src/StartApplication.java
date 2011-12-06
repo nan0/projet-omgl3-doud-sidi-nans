@@ -21,7 +21,8 @@ public class StartApplication {
 		
 		// Creation de l'instance du controleur
 		// récupération de tous les objets sérialisés de l'application
-		Controleur controleur = new Controleur().restaure();
+		Controleur controleur = new Controleur();
+		controleur.restaure();
 		// création affichage de la fenêtre principale
 		controleur.menuBiblio();
 		
