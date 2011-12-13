@@ -11,7 +11,7 @@ import java.util.Observable;
  * @author IUT, refactoré par E. Ceret
  * @version 2.0
  */
-public class Ouvrage extends Observable implements Serializable {
+public class Ouvrage extends Document implements Serializable {
 
 	// ************************************************************************************************************
 	// Constantes
@@ -23,14 +23,13 @@ public class Ouvrage extends Observable implements Serializable {
 	// Attributs
 	// ************************************************************************************************************
 	private String _isbn;
-	private String _titre;
-	private String _auteur;
 	private String _editeur;
 	private GregorianCalendar _dateEdition;
 	private int _derNumExemplaire;
 
 	// Attributs d'Association
 	private HashMap<Integer, Exemplaire> _exemplaires;
+	private HashMap<Integer, Auteur> _auteurs; 
 	
 	// ************************************************************************************************************
 	// Constructeur
@@ -44,14 +43,14 @@ public class Ouvrage extends Observable implements Serializable {
 	 * @param editeur		editeur de l'ouvrage
 	 * @param dateEdition	date d'edition
 	 */
-	public Ouvrage(String isbn, String titre, String auteur, String editeur, GregorianCalendar dateEdition) {
+	public Ouvrage(String isbn, String titre, String editeur, GregorianCalendar dateEdition, HashMap<Integer, Auteur> auteurs) {
 		
+		super(titre);
 		this.setIsbn(isbn);
-		this.setTitre(titre);
-		this.setAuteur(auteur);
 		this.setEditeur(editeur);
 		this.setDateEdition(dateEdition);
 		this.setExemplaires(new HashMap<Integer, Exemplaire>());
+		this.setAuteurs(auteurs);
 		this.setDerNumExemplaire(0);
 		
 	} // Fin Constructeur
@@ -62,14 +61,7 @@ public class Ouvrage extends Observable implements Serializable {
 	
 	// ------------------------------------------------------------------------------------------------------------
 	// Affecteurs
-	
-	/**
-	 * setter de l'attribut auteur
-	 * @param auteur valeur à affecter à l'auteur de l'ouvrage
-	 */
-	public void setAuteur(String auteur){
-		_auteur = auteur;
-	}
+
 	
 	/**
 	 * setter de l'attribut dateEdition
@@ -104,14 +96,6 @@ public class Ouvrage extends Observable implements Serializable {
 	}
 
 	/**
-	 * setter de l'attribut titre.
-	 * @param titre valeur à affecter au titre de l'ouvrage
-	 */
-	public void setTitre(String titre){
-		_titre = titre;
-	}
-	
-	/**
 	 * setter du num du dernier exemplaire.
 	 * @param derNumExemplaire nombre à affecter au dernier numéro d'exemplaire
 	 */
@@ -143,6 +127,10 @@ public class Ouvrage extends Observable implements Serializable {
 	private void setExemplaire(int numero, Exemplaire exemplaire) {
 		_exemplaires.put(numero, exemplaire);	
 	} // Fin setExemplaire
+	
+	private void setAuteurs(HashMap<Integer, Auteur> auteurs) {
+		_auteurs = auteurs;
+	}
 
 	
 	/**
@@ -168,22 +156,6 @@ public class Ouvrage extends Observable implements Serializable {
 	 */
 	public String getIsbn() {
 		return _isbn;
-	}
-
-	/**
-	 * Getter du titre.
-	 * @return titre de l'ouvrage
-	 */
-	public String getTitre() {
-		return _titre;
-	}
-
-	/**
-	 * getter de l'auteur.
-	 * @return auteur de l'ouvrage
-	 */
-	public String getAuteur() {
-		return _auteur;
 	}
 
 	/**

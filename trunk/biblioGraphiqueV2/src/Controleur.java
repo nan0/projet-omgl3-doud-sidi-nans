@@ -31,6 +31,8 @@ public class Controleur implements Serializable{
 		private HashMap<String, Ouvrage> _ouvrages; 
 		// Ensemble des periodiques de la bibliothèque
 		private HashMap<String, Periodique> _periodiques; 
+		// Ensemble des auteurs de la bibliothèque
+		private HashMap<Integer, Auteur> _auteurs; 
 		
 		// les différentes fenêtres pour chaque fonctionnalité
 		private VueMenuBiblio _vueMenuBiblio = null;
@@ -47,6 +49,8 @@ public class Controleur implements Serializable{
 
 		public Controleur() {
 			this.setOuvrages(new HashMap<String, Ouvrage>());
+			this.setPeriodiques(new HashMap<String, Periodique>());
+			this.setAuteurs(new HashMap<Integer, Auteur>());
 		} // Fin Controleur
 
 		// ************************************************************************************************************
@@ -86,6 +90,22 @@ public class Controleur implements Serializable{
 		 */
 		private void setPeriodiques(HashMap<String, Periodique> periodiques) {
 			_periodiques = periodiques;
+		}// Fin setPeriodiques
+		
+		/**
+		 * Ajoute un Periodique à l'ensemble des periodiques de la bibliothèque.
+		 * @param periodique periodique à ajouter
+		 * @param issn 	code ISSN de cet ouvrage
+		 */
+		public void setAuteur(Auteur auteur, int numero) {
+			this.getAuteurs().put(numero, auteur);
+		} // Fin setPeriodique
+
+		/**
+		 * @param periodiques hashtable de periodique à affecter
+		 */
+		public void setAuteurs(HashMap<Integer, Auteur> auteurs) {
+			_auteurs = auteurs;
 		}// Fin setPeriodiques
 		
 		/**
@@ -144,6 +164,19 @@ public class Controleur implements Serializable{
 			return this.getPeriodiques().get(issn);
 		} // Fin getPeriodique
 		
+		public HashMap<Integer, Auteur> getAuteurs() {
+			return _auteurs;
+		}// Fin getPeriodiques
+		
+		/**
+		 * Accès à un Periodique par son numéro ISSN
+		 * @param issn 	le code ISSN du periodique cherché
+		 * @return le periodique qui a l'ISSN indiqué
+		 */
+		private Auteur getAuteur(int numero) {
+			return this.getAuteurs().get(numero);
+		} // Fin getPeriodique
+		
 		/**
 		 * @return la vue  
 		 */
@@ -167,6 +200,13 @@ public class Controleur implements Serializable{
 			return _vueConsultOuvrage ;
 		}// Fin getVueVueConsultOuvrage
 		
+		
+		public int genererNumAuteur() {
+			if (this.getAuteurs().isEmpty())
+				return 1;
+			else
+				return (this.getAuteurs().size() + 1);
+		}
 		
 		// ************************************************************************************************************
 		// Méthodes publiques de création et affichage des fenêtres de l'application et fermeture
@@ -377,9 +417,9 @@ public class Controleur implements Serializable{
 		 * @param  dateEdition la date d'édition de l'ouvrage
 		 * affiche un message de confirmation après l'enregistrement ou un message d'erreur 
 		 */
-		public void nouvOuvrage(String isbn, String titre, String auteur, String editeur, String dateEdition) {
+		public void nouvOuvrage(String isbn, String titre, String editeur, String dateEdition, HashMap<Integer, Auteur> auteurs) {
 			// vérification de la présence des infos obligatoires et du format de la date
-			if ((isbn.length() == 0) || (titre.length() == 0) || (auteur.length() == 0) 
+			if ((isbn.length() == 0) || (titre.length() == 0) || (auteurs.isEmpty()) 
 					|| (editeur.length() == 0 )|| (dateEdition.length() == 0 )){
 					Message dialog = new Message("Tous les champs sont obligatoires");
 					dialog.setVisible(true);
@@ -392,7 +432,7 @@ public class Controleur implements Serializable{
 					}
 				else if (this.getOuvrage(isbn )== null) {
 				// Instanciation de l'ouvrage
-					Ouvrage ouvrage = new Ouvrage(isbn, titre, auteur, editeur, date);
+					Ouvrage ouvrage = new Ouvrage(isbn, titre, editeur, date, auteurs);
 				// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
 					this.setOuvrage(ouvrage, isbn);
 					
