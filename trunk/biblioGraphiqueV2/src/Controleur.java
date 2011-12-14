@@ -369,6 +369,20 @@ public class Controleur implements Serializable{
 			return ouv;
 		} // Fin rechOuvrage
 		
+		public void ajouterAuteur(String nom, String prenom, boolean existe) {
+			int i = 0;
+			/* listAuteur.getSelectedValue(); */
+			if (nom.length() != 0 && prenom.length() != 0) {
+				Auteur auteur = new Auteur(nom, prenom);
+				int num = genererNumAuteur();
+				setAuteur(auteur, num);
+				this.getVueSaisieOuvrage().getAuteursCour().put(num, auteur);
+				this.getVueSaisieOuvrage().reinitChampAuteur();
+			} else if (existe) {
+				this.getVueSaisieOuvrage().recupAuteurs();
+			}
+		}
+		
 		/**
 		 * Création d'un exemplaire d'ouvrage 
 		 * Invoqué dans VueSaisieExemplaire

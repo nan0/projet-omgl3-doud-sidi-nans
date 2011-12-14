@@ -10,6 +10,9 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
+import java.awt.List;
+import java.util.ArrayList;
 /**
  * Fenêtre de consultation d'un ouvrage
  * Code du JFrame généré par Window Builder/Swing Designer.
@@ -22,7 +25,6 @@ public class VueConsultOuvrage extends Vue {
 	private JPanel contentPane;
 	private JTextField textFieldIsbn;
 	private JTextField textFieldTitre;
-	private JTextField textFieldAuteur;
 	private JTextField textFieldEditeur;
 	private JTextField textFieldDateEdition;
 	private JTextField textFieldNbConsultables;
@@ -32,6 +34,8 @@ public class VueConsultOuvrage extends Vue {
 	private JButton buttonRech;
 	private JButton buttonAnnuler;
 	private JButton buttonFermer;
+	private JScrollPane scrollPane;
+	private List list;
 	
 	
 	/**
@@ -41,7 +45,7 @@ public class VueConsultOuvrage extends Vue {
 		super(controleur);
 		setTitle("Informations sur un ouvrage");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); 
-		setBounds(100, 100, 450, 408);
+		setBounds(100, 100, 450, 480);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -91,14 +95,8 @@ public class VueConsultOuvrage extends Vue {
 			public void actionPerformed(ActionEvent e) {
 			getControleur().fermerVue(VueConsultOuvrage.this);}
 		});
-		buttonFermer.setBounds(197, 346, 107, 25);
+		buttonFermer.setBounds(255, 415, 107, 25);
 		contentPane.add(buttonFermer);
-		
-		textFieldAuteur = new JTextField();
-		textFieldAuteur.setEditable(false);
-		textFieldAuteur.setColumns(10);
-		textFieldAuteur.setBounds(112, 176, 214, 19);
-		contentPane.add(textFieldAuteur);
 		
 		JLabel lblAuteur = new JLabel("Auteur");
 		lblAuteur.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -108,44 +106,51 @@ public class VueConsultOuvrage extends Vue {
 		textFieldEditeur = new JTextField();
 		textFieldEditeur.setEditable(false);
 		textFieldEditeur.setColumns(10);
-		textFieldEditeur.setBounds(112, 207, 214, 19);
+		textFieldEditeur.setBounds(138, 305, 214, 19);
 		contentPane.add(textFieldEditeur);
 		
 		JLabel lblEditeur = new JLabel("Editeur");
 		lblEditeur.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblEditeur.setBounds(17, 209, 61, 15);
+		lblEditeur.setBounds(38, 307, 61, 15);
 		contentPane.add(lblEditeur);
 		
 		textFieldDateEdition = new JTextField();
 		textFieldDateEdition.setEditable(false);
 		textFieldDateEdition.setColumns(10);
-		textFieldDateEdition.setBounds(112, 238, 114, 19);
+		textFieldDateEdition.setBounds(138, 330, 114, 19);
 		contentPane.add(textFieldDateEdition);
 		
 		JLabel lblDatedition = new JLabel("Date édition");
 		lblDatedition.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblDatedition.setBounds(3, 240, 82, 15);
+		lblDatedition.setBounds(38, 332, 82, 15);
 		contentPane.add(lblDatedition);
 		
 		JLabel lblNbExemplairesEn = new JLabel("Nb exemplaires en consultation");
-		lblNbExemplairesEn.setBounds(24, 279, 202, 15);
+		lblNbExemplairesEn.setBounds(38, 359, 202, 15);
 		contentPane.add(lblNbExemplairesEn);
 		
 		JLabel lblNbExemplairesEmpruntables = new JLabel("Nb exemplaires empruntables");
-		lblNbExemplairesEmpruntables.setBounds(34, 306, 202, 15);
+		lblNbExemplairesEmpruntables.setBounds(38, 386, 202, 15);
 		contentPane.add(lblNbExemplairesEmpruntables);
 		
 		textFieldNbConsultables = new JTextField();
 		textFieldNbConsultables.setEditable(false);
-		textFieldNbConsultables.setBounds(248, 277, 46, 19);
+		textFieldNbConsultables.setBounds(255, 357, 46, 19);
 		contentPane.add(textFieldNbConsultables);
 		textFieldNbConsultables.setColumns(10);
 		
 		textFieldNbEmpruntables = new JTextField();
 		textFieldNbEmpruntables.setEditable(false);
-		textFieldNbEmpruntables.setBounds(248, 304, 46, 19);
+		textFieldNbEmpruntables.setBounds(255, 384, 46, 19);
 		contentPane.add(textFieldNbEmpruntables);
 		textFieldNbEmpruntables.setColumns(10);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(112, 178, 220, 102);
+		contentPane.add(scrollPane);
+		
+		list = new List();
+		scrollPane.setViewportView(list);
 		}
 	
 	/**
@@ -153,7 +158,15 @@ public class VueConsultOuvrage extends Vue {
 	 */
 	public void alimente(Ouvrage ouv) {
 			textFieldTitre.setText(ouv.getTitre());
-			textFieldAuteur.setText(ouv.getAuteur());
+			ArrayList<String> tab = new ArrayList<String>();
+			for (int i = 1; i <= ouv.getAuteurs().size(); i = i + 3) {
+				tab.add(Integer.toString(i));
+				tab.add(ouv.getAuteurs().get(i).getNom());
+				tab.add(ouv.getAuteurs().get(i).getPrenom());
+			}
+			for (int i = 0; i < (tab.size() - 2); i = i + 3) {
+				list.add(tab.get(i+1) + " " + tab.get(i+2), Integer.parseInt(tab.get(i)));
+			}
 			textFieldEditeur.setText(ouv.getEditeur());
 			textFieldDateEdition.setText (ESDate.ecrireDate (ouv.getDateEdition()));
 			int nbConsult = ouv.getNbExemplairesEnConsultation();

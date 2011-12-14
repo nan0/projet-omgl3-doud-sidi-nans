@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.ArrayList;
 import javax.swing.DefaultListModel;
+import java.util.Iterator;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -20,6 +21,13 @@ import javax.swing.JComboBox;
 import javax.swing.JList;
 import javax.swing.JTree;
 import javax.swing.JScrollBar;
+import java.awt.List;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Scrollbar;
+import java.awt.ScrollPane;
+import java.awt.Panel;
+import javax.swing.JScrollPane;
 
 /**
  * Fenêtre de saisie d'un ouvrage Code du JFrame généré par Window Builder/Swing
@@ -41,8 +49,12 @@ public class VueSaisieOuvrage extends Vue {
 	private JTextField textFieldPrenom;
 	private JLabel lblNom;
 	private JLabel lblPrenom;
-	private JList listAuteur;
 	private HashMap<Integer, Auteur> _auteurs;
+	private List list;
+	private HashMap<Integer, Auteur> listToutAuteurs;
+	private JScrollPane scrollPane;
+	private List list_1;
+	private boolean existe = false;
 
 	/**
 	 * Create the frame.
@@ -75,7 +87,7 @@ public class VueSaisieOuvrage extends Vue {
 		contentPane.add(lblNewLabel_1);
 
 		textFieldTitre = new JTextField();
-		textFieldTitre.setBounds(170, 65, 225, 19);
+		textFieldTitre.setBounds(170, 65, 141, 19);
 		contentPane.add(textFieldTitre);
 		textFieldTitre.setColumns(10);
 
@@ -89,6 +101,7 @@ public class VueSaisieOuvrage extends Vue {
 
 				getControleur().nouvOuvrage(isbn, titre, editeur, dateEdition,
 						_auteurs);
+				_auteurs = null;
 			}
 		});
 		buttonEnreg.setBounds(302, 396, 107, 25);
@@ -109,7 +122,7 @@ public class VueSaisieOuvrage extends Vue {
 		contentPane.add(lblNewLabel_2);
 
 		textFieldDate = new JTextField();
-		textFieldDate.setBounds(170, 127, 114, 19);
+		textFieldDate.setBounds(170, 127, 141, 19);
 		contentPane.add(textFieldDate);
 		textFieldDate.setColumns(10);
 
@@ -120,35 +133,35 @@ public class VueSaisieOuvrage extends Vue {
 
 		textFieldEditeur = new JTextField();
 		textFieldEditeur.setColumns(10);
-		textFieldEditeur.setBounds(170, 96, 218, 19);
+		textFieldEditeur.setBounds(170, 96, 141, 19);
 		contentPane.add(textFieldEditeur);
 
-		HashMap<Integer, Auteur> listToutAuteurs = getControleur().getAuteurs();
+		
+		listToutAuteurs = getControleur().getAuteurs();
 		ArrayList<String> tab = new ArrayList<String>();
-		/* String[] tab2 = new String[listToutAuteurs.values().size()]; */
-		for (int i = 0; i < tab.size(); i = i + 2) {
+		Iterator it= tab.iterator(); 
+		for (int i = 1; i <= listToutAuteurs.size(); i = i + 3) {
+			tab.add(Integer.toString(i));
 			tab.add(listToutAuteurs.get(i).getNom());
 			tab.add(listToutAuteurs.get(i).getPrenom());
 		}
+	
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(170, 165, 200, 108);
+		contentPane.add(scrollPane);
 		
-		/*//Création du model 
-		DefaultListModel listModel = new DefaultListModel();
-		 
-		//Remplir le model
-		int size = tab.size();
-		for(int index=0; index<size; index++)
-		{
-		     listModel.addElement(tab.get(index));
+		list = new List();
+		list.setMultipleMode(true);
+		list.setFont(new Font("Dialog", Font.BOLD, 12));
+		list.setForeground(Color.BLACK);
+		list.setBackground(Color.WHITE);
+		list.setMultipleSelections(true);
+		for (int i = 0; i < (tab.size() - 2); i = i + 3) {
+			list.add(tab.get(i+1) + " " + tab.get(i+2), Integer.parseInt(tab.get(i)));
 		}
-		 
-		//Donné le model à la liste*/
-		listAuteur = new JList(tab.toArray());
-		/*listAuteur.setModel(listModel);*/
-		listAuteur
-				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		listAuteur.setBounds(170, 167, 154, 96);
-		contentPane.add(listAuteur);
-
+		list.setBounds(170, 165, 150, 80);
+		scrollPane.setViewportView(list);
+			
 		textFieldNom = new JTextField();
 		textFieldNom.setBounds(170, 296, 114, 19);
 		contentPane.add(textFieldNom);
@@ -157,27 +170,11 @@ public class VueSaisieOuvrage extends Vue {
 		JButton btnAjouter = new JButton("Ajouter");
 		buttonEnreg.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int i = 0;
 				String nom = textFieldNom.getText();
 				String prenom = textFieldPrenom.getText();
-				/* listAuteur.getSelectedValue(); */
-				if (nom.length() != 0 && prenom.length() != 0) {
-					Auteur auteur = new Auteur(nom, prenom);
-					int num = getControleur().genererNumAuteur();
-					getControleur().setAuteur(auteur, num);
-					_auteurs.put(num, auteur);
-				} else if (listAuteur.getSelectedValues() != null) {
-					Object[] auteursVect = listAuteur.getSelectedValues();
-					int num;
-					while (i < (listAuteur.getSelectedIndices().length)) {
-						Auteur auteur = new Auteur(auteursVect[i].toString(),
-								auteursVect[i + 1].toString());
-						num = getControleur().genererNumAuteur();
-						getControleur().setAuteur(auteur, num);
-						_auteurs.put(num, auteur);
-						i = i + 2;
-					}
-				}
+				if (list.getSelectedItems() != null)
+					existe = true;
+				getControleur().ajouterAuteur(nom, prenom, existe);
 			}
 		});
 		btnAjouter.setBounds(302, 327, 107, 25);
@@ -203,11 +200,30 @@ public class VueSaisieOuvrage extends Vue {
 		lblPrenom = new JLabel("Prénom");
 		lblPrenom.setBounds(99, 332, 61, 15);
 		contentPane.add(lblPrenom);
-
-		JScrollBar scrollBar = new JScrollBar();
-		scrollBar.setBounds(307, 167, 17, 96);
-		contentPane.add(scrollBar);
 	
+
+	}
+	
+	public void recupAuteurs() {
+		int[] auteursVect = list.getSelectedIndexes();
+		int num;
+		int i = 0;
+		while (i < (list.getSelectedItems().length)) {
+			Auteur auteur = new Auteur(listToutAuteurs.get(auteursVect[i]).getNom(),
+					listToutAuteurs.get(auteursVect[i]).getPrenom());
+			num = getControleur().genererNumAuteur();
+			/*getControleur().setAuteur(auteur, num);*/
+			_auteurs.put(num, auteur);
+		}
+	}
+	
+	public HashMap<Integer, Auteur> getAuteursCour() {
+		return _auteurs;
+	}
+	
+	public void reinitChampAuteur() {
+		textFieldNom.setText("");
+		textFieldPrenom.setText("");
 	}
 	
 	/**
