@@ -29,7 +29,6 @@ public class Ouvrage extends Document implements Serializable {
 
 	// Attributs d'Association
 	private HashMap<Integer, Exemplaire> _exemplaires;
-	private HashMap<Integer, Auteur> _auteurs; 
 	
 	// ************************************************************************************************************
 	// Constructeur
@@ -46,11 +45,11 @@ public class Ouvrage extends Document implements Serializable {
 	public Ouvrage(String isbn, String titre, String editeur, GregorianCalendar dateEdition, HashMap<Integer, Auteur> auteurs) {
 		
 		super(titre);
+		super.setAuteurs(auteurs);
 		this.setIsbn(isbn);
 		this.setEditeur(editeur);
 		this.setDateEdition(dateEdition);
 		this.setExemplaires(new HashMap<Integer, Exemplaire>());
-		this.setAuteurs(auteurs);
 		this.setDerNumExemplaire(0);
 		
 	} // Fin Constructeur
@@ -127,10 +126,6 @@ public class Ouvrage extends Document implements Serializable {
 	private void setExemplaire(int numero, Exemplaire exemplaire) {
 		_exemplaires.put(numero, exemplaire);	
 	} // Fin setExemplaire
-	
-	private void setAuteurs(HashMap<Integer, Auteur> auteurs) {
-		_auteurs = auteurs;
-	}
 
 	
 	/**

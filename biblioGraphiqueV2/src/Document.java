@@ -44,6 +44,10 @@ public class Document extends Observable implements Serializable {
 		_titre = titre;
 	}
 	
+	protected void setAuteurs(HashMap<Integer, Auteur> auteurs) {
+		_auteurs = auteurs;
+	}
+	
 	public void ajouterAuteurs(HashMap<Integer, Auteur> auteurs) {
 		_auteurs = auteurs;
 	}
@@ -81,7 +85,7 @@ public class Document extends Observable implements Serializable {
 	 * getter de l'ensemble des exemplaires.
 	 * @return une collection d'exemplaires
 	 */
-	public Collection<Auteur> getAuteurs() {
-		return _auteurs.values();
+	public HashMap<Integer, Auteur> getAuteurs() {
+		return _auteurs;
 	}
 }
