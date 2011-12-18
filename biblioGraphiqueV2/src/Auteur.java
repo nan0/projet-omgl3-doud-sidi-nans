@@ -16,7 +16,6 @@ public class Auteur extends Observable implements Serializable {
 	// Attributs
 	// ************************************************************************************************************
 	private String _nom;
-	private String _prenom;
 	private HashMap<Integer, Document> _documents;
 	
 	/**
@@ -24,10 +23,9 @@ public class Auteur extends Observable implements Serializable {
 	 * @param nom			nom de l'auteur
 	 * @param prenom		prenom de l'auteur
 	 */
-	public Auteur(String nom, String prenom) {
+	public Auteur(String nom) {
 		
 		this.setNom(nom);
-		this.setPrenom(prenom);
 	} // Fin Constructeur
 	
 	// ************************************************************************************************************
@@ -42,20 +40,13 @@ public class Auteur extends Observable implements Serializable {
 	 * @param nom nom de l'auteur
 	 */
 	public String toString() {
-		return this.getNom() + "  " + this.getPrenom();
+		return this.getNom();
 	}
 	
 	public void setNom(String nom){
 		_nom = nom;
 	}
-	
-	/**
-	 * setter de l'attribut prenom
-	 * @param prenom prenom de l'auteur
-	 */
-	public void setPrenom(String prenom){
-		_prenom = prenom;
-	}
+
 	
 	// ------------------------------------------------------------------------------------------------------------
 	// Accesseurs
@@ -66,14 +57,6 @@ public class Auteur extends Observable implements Serializable {
 	 */
 	public String getNom() {
 		return _nom;
-	}
-
-	/**
-	 * Getter du prenom
-	 * @return prenom de l'auteur
-	 */
-	public String getPrenom() {
-		return _prenom;
 	}
 	
 }

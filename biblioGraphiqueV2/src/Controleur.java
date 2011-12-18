@@ -14,7 +14,7 @@ import java.io.ObjectOutputStream;
  */
 
 //public class Controleur extends Observable implements Serializable{
-public class Controleur implements Serializable{
+public class Controleur extends Observable implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -33,6 +33,7 @@ public class Controleur implements Serializable{
 		private HashMap<String, Periodique> _periodiques; 
 		// Ensemble des auteurs de la bibliothèque
 		private HashMap<Integer, Auteur> _auteurs; 
+		private HashMap<Integer, Auteur> _auteursCreer;
 		
 		// les différentes fenêtres pour chaque fonctionnalité
 		private VueMenuBiblio _vueMenuBiblio = null;
@@ -43,6 +44,7 @@ public class Controleur implements Serializable{
 		private VueSaisiePeriodique _vueSaisiePeriodique = null;
 		private VueSaisieExemplaire _vueSaisieExemplaire = null;
 		private VueConsultOuvrage _vueConsultOuvrage = null;
+		private int incremente = 0;
 		// ************************************************************************************************************
 		// Constructeur
 		// ************************************************************************************************************
@@ -51,6 +53,7 @@ public class Controleur implements Serializable{
 			this.setOuvrages(new HashMap<String, Ouvrage>());
 			this.setPeriodiques(new HashMap<String, Periodique>());
 			this.setAuteurs(new HashMap<Integer, Auteur>());
+			this.setAuteursCreer(new HashMap<Integer, Auteur>());
 		} // Fin Controleur
 
 		// ************************************************************************************************************
@@ -107,6 +110,10 @@ public class Controleur implements Serializable{
 		public void setAuteurs(HashMap<Integer, Auteur> auteurs) {
 			_auteurs = auteurs;
 		}// Fin setPeriodiques
+		
+		public void setAuteursCreer(HashMap<Integer, Auteur> auteursCreer) {
+			_auteursCreer = auteursCreer;
+		}// Fin setAuteursCreer
 		
 		/**
 		 * @param vue  la vue à affecter
@@ -168,6 +175,10 @@ public class Controleur implements Serializable{
 			return _auteurs;
 		}// Fin getPeriodiques
 		
+		public HashMap<Integer, Auteur> getAuteursCreer() {
+			return _auteursCreer;
+		}// Fin getPeriodiques
+		
 		/**
 		 * Accès à un Periodique par son numéro ISSN
 		 * @param issn 	le code ISSN du periodique cherché
@@ -206,6 +217,13 @@ public class Controleur implements Serializable{
 				return 1;
 			else
 				return (this.getAuteurs().size() + 1);
+		}
+		
+		public int genererNumAuteurCreer() {
+			if (this.getAuteursCreer().isEmpty())
+				return 1;
+			else
+				return (this.getAuteursCreer().size() + 1);
 		}
 		
 		// ************************************************************************************************************
@@ -369,14 +387,17 @@ public class Controleur implements Serializable{
 			return ouv;
 		} // Fin rechOuvrage
 		
-		public void ajouterAuteur(String nom, String prenom, boolean existe) {
-			int i = 0;
+		public void ajouterAuteur(String nom, boolean existe) {
 			/* listAuteur.getSelectedValue(); */
-			if (nom.length() != 0 && prenom.length() != 0) {
-				Auteur auteur = new Auteur(nom, prenom);
-				int num = genererNumAuteur();
-				setAuteur(auteur, num);
-				this.getVueSaisieOuvrage().getAuteursCour().put(num, auteur);
+			if (nom.length() != 0) {
+				int num = this.getVueSaisieOuvrage().genererNumAuteurCour();
+				this.getVueSaisieOuvrage().getAuteursCour().put(num, nom);
+				num = this.genererNumAuteur();
+				Auteur auteur = new Auteur(nom);
+				_auteurs.put(num, auteur);
+				String mess = nom + " à été ajouté";
+				Message dialog = new Message(mess);
+				dialog.setVisible(true);
 				this.getVueSaisieOuvrage().reinitChampAuteur();
 			} else if (existe) {
 				this.getVueSaisieOuvrage().recupAuteurs();
@@ -431,9 +452,9 @@ public class Controleur implements Serializable{
 		 * @param  dateEdition la date d'édition de l'ouvrage
 		 * affiche un message de confirmation après l'enregistrement ou un message d'erreur 
 		 */
-		public void nouvOuvrage(String isbn, String titre, String editeur, String dateEdition, HashMap<Integer, Auteur> auteurs) {
+		public void nouvOuvrage(String isbn, String titre, String editeur, String dateEdition, HashMap<Integer, String> noms) {
 			// vérification de la présence des infos obligatoires et du format de la date
-			if ((isbn.length() == 0) || (titre.length() == 0) || (auteurs.isEmpty()) 
+			if ((isbn.length() == 0) || (titre.length() == 0) || (noms.isEmpty()) 
 					|| (editeur.length() == 0 )|| (dateEdition.length() == 0 )){
 					Message dialog = new Message("Tous les champs sont obligatoires");
 					dialog.setVisible(true);
@@ -446,10 +467,17 @@ public class Controleur implements Serializable{
 					}
 				else if (this.getOuvrage(isbn )== null) {
 				// Instanciation de l'ouvrage
-					Ouvrage ouvrage = new Ouvrage(isbn, titre, editeur, date, auteurs);
+					int numC;
+					this.setAuteursCreer(new HashMap<Integer, Auteur>());
+					Auteur auteur;
+					for (int i = 0; i < noms.size(); i++) {
+						numC = this.genererNumAuteurCreer();
+						auteur = new Auteur((noms.values().toArray())[i].toString());
+						_auteursCreer.put(numC, auteur);
+					}
+					Ouvrage ouvrage = new Ouvrage(isbn, titre, editeur, date, _auteursCreer);
 				// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
 					this.setOuvrage(ouvrage, isbn);
-					
 					Message dialog = new Message("Ouvrage enregistré");
 					dialog.setVisible(true);
 					this.fermerVue (this.getVueSaisieOuvrage());
