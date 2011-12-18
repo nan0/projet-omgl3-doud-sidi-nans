@@ -159,13 +159,12 @@ public class VueConsultOuvrage extends Vue {
 	public void alimente(Ouvrage ouv) {
 			textFieldTitre.setText(ouv.getTitre());
 			ArrayList<String> tab = new ArrayList<String>();
-			for (int i = 1; i <= ouv.getAuteurs().size(); i = i + 3) {
+			for (int i = 0; i < ouv.getAuteurs().size(); i = i + 1) {
 				tab.add(Integer.toString(i));
-				tab.add(ouv.getAuteurs().get(i).getNom());
-				tab.add(ouv.getAuteurs().get(i).getPrenom());
+				tab.add(((Auteur)ouv.getAuteurs().values().toArray()[i]).getNom());
 			}
-			for (int i = 0; i < (tab.size() - 2); i = i + 3) {
-				list.add(tab.get(i+1) + " " + tab.get(i+2), Integer.parseInt(tab.get(i)));
+			for (int i = 0; i < (tab.size() - 1); i = i + 2) {
+				list.add(tab.get(i+1), Integer.parseInt(tab.get(i)));
 			}
 			textFieldEditeur.setText(ouv.getEditeur());
 			textFieldDateEdition.setText (ESDate.ecrireDate (ouv.getDateEdition()));

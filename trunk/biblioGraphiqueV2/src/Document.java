@@ -27,6 +27,7 @@ public class Document extends Observable implements Serializable {
 	public Document(String titre) {
 		
 		this.setTitre(titre);
+		this.setAuteurs(new HashMap<Integer, Auteur>());
 	} // Fin Constructeur
 	
 	// ************************************************************************************************************

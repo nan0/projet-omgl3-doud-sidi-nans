@@ -45,11 +45,11 @@ public class VueSaisieOuvrage extends Vue {
 	private JTextField textFieldEditeur;
 	private JButton buttonEnreg;
 	private JButton buttonAnnuler;
+	private JButton btnAjouter;
 	private JTextField textFieldNom;
 	private JTextField textFieldPrenom;
 	private JLabel lblNom;
-	private JLabel lblPrenom;
-	private HashMap<Integer, Auteur> _auteurs;
+	private HashMap<Integer, String> _noms;
 	private List list;
 	private HashMap<Integer, Auteur> listToutAuteurs;
 	private JScrollPane scrollPane;
@@ -69,7 +69,7 @@ public class VueSaisieOuvrage extends Vue {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
-		this.setAuteurs(new HashMap<Integer, Auteur>());
+		this.setAuteurs(new HashMap<Integer, String>());
 		
 		JLabel lblNewLabel = new JLabel("Isbn");
 		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -100,8 +100,8 @@ public class VueSaisieOuvrage extends Vue {
 				String dateEdition = textFieldDate.getText();
 
 				getControleur().nouvOuvrage(isbn, titre, editeur, dateEdition,
-						_auteurs);
-				_auteurs = null;
+						_noms);
+				_noms = null;
 			}
 		});
 		buttonEnreg.setBounds(302, 396, 107, 25);
@@ -139,11 +139,10 @@ public class VueSaisieOuvrage extends Vue {
 		
 		listToutAuteurs = getControleur().getAuteurs();
 		ArrayList<String> tab = new ArrayList<String>();
-		Iterator it= tab.iterator(); 
-		for (int i = 1; i <= listToutAuteurs.size(); i = i + 3) {
+		//Iterator it= tab.iterator(); 
+		for (int i = 0; i < listToutAuteurs.size(); i = i + 1) {
 			tab.add(Integer.toString(i));
-			tab.add(listToutAuteurs.get(i).getNom());
-			tab.add(listToutAuteurs.get(i).getPrenom());
+			tab.add(((Auteur)listToutAuteurs.values().toArray()[i]).getNom());
 		}
 	
 		scrollPane = new JScrollPane();
@@ -156,8 +155,8 @@ public class VueSaisieOuvrage extends Vue {
 		list.setForeground(Color.BLACK);
 		list.setBackground(Color.WHITE);
 		list.setMultipleSelections(true);
-		for (int i = 0; i < (tab.size() - 2); i = i + 3) {
-			list.add(tab.get(i+1) + " " + tab.get(i+2), Integer.parseInt(tab.get(i)));
+		for (int i = 0; i < (tab.size() - 1); i = i + 2) {
+			list.add(tab.get(i+1), Integer.parseInt(tab.get(i)));
 		}
 		list.setBounds(170, 165, 150, 80);
 		scrollPane.setViewportView(list);
@@ -167,14 +166,13 @@ public class VueSaisieOuvrage extends Vue {
 		contentPane.add(textFieldNom);
 		textFieldNom.setColumns(10);
 
-		JButton btnAjouter = new JButton("Ajouter");
-		buttonEnreg.addActionListener(new ActionListener() {
+		btnAjouter = new JButton("Ajouter");
+		btnAjouter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nom = textFieldNom.getText();
-				String prenom = textFieldPrenom.getText();
 				if (list.getSelectedItems() != null)
 					existe = true;
-				getControleur().ajouterAuteur(nom, prenom, existe);
+				getControleur().ajouterAuteur(nom, existe);
 			}
 		});
 		btnAjouter.setBounds(302, 327, 107, 25);
@@ -188,55 +186,52 @@ public class VueSaisieOuvrage extends Vue {
 		lblSelectionnerUnAuteur.setBounds(38, 275, 371, 15);
 		contentPane.add(lblSelectionnerUnAuteur);
 
-		textFieldPrenom = new JTextField();
-		textFieldPrenom.setBounds(170, 330, 114, 19);
-		contentPane.add(textFieldPrenom);
-		textFieldPrenom.setColumns(10);
-
-		lblNom = new JLabel("Nom");
+		lblNom = new JLabel("Nom et prénom");
 		lblNom.setBounds(99, 298, 61, 15);
-		contentPane.add(lblNom);
-
-		lblPrenom = new JLabel("Prénom");
-		lblPrenom.setBounds(99, 332, 61, 15);
-		contentPane.add(lblPrenom);
-	
+		contentPane.add(lblNom);	
 
 	}
 	
 	public void recupAuteurs() {
-		int[] auteursVect = list.getSelectedIndexes();
 		int num;
 		int i = 0;
 		while (i < (list.getSelectedItems().length)) {
-			Auteur auteur = new Auteur(listToutAuteurs.get(auteursVect[i]).getNom(),
-					listToutAuteurs.get(auteursVect[i]).getPrenom());
-			num = getControleur().genererNumAuteur();
+			num = genererNumAuteurCour();
 			/*getControleur().setAuteur(auteur, num);*/
-			_auteurs.put(num, auteur);
+			_noms.put(num, list.getSelectedItems()[i]);
+			Message dialog = new Message(list.getSelectedItems()[i]);
+			dialog.setVisible(true);
+			i++;
 		}
 	}
 	
-	public HashMap<Integer, Auteur> getAuteursCour() {
-		return _auteurs;
+	int genererNumAuteurCour() {
+		if (_noms.isEmpty())
+			return 1;
+		else
+			return (_noms.size() + 1);
+	}
+	
+	public HashMap<Integer, String> getAuteursCour() {
+		return _noms;
 	}
 	
 	public void reinitChampAuteur() {
 		textFieldNom.setText("");
-		textFieldPrenom.setText("");
 	}
 	
 	/**
 	 * @param periodiques hashtable de periodique à affecter
 	 */
-	public void setAuteurs(HashMap<Integer, Auteur> auteurs) {
-		_auteurs = auteurs;
+	public void setAuteurs(HashMap<Integer, String> noms) {
+		_noms = noms;
 	}// Fin setPeriodiques
 
 	public void setEtat(int etat) {
 		switch (etat) {
 		case initiale: {
 			buttonEnreg.setEnabled(true);
+			btnAjouter.setEnabled(true);
 			buttonAnnuler.setEnabled(true);
 			break;
 		}
