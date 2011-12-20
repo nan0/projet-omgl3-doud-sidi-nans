@@ -480,6 +480,7 @@ public class Controleur extends Observable implements Serializable{
 					this.setOuvrage(ouvrage, isbn);
 					Message dialog = new Message("Ouvrage enregistré");
 					dialog.setVisible(true);
+					this.getVueSaisieOuvrage().setNoms(new HashMap<Integer, String>());
 					this.fermerVue (this.getVueSaisieOuvrage());
 					} 
 				else {

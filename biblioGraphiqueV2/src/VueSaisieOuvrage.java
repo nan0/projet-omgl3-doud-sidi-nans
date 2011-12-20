@@ -101,7 +101,6 @@ public class VueSaisieOuvrage extends Vue {
 
 				getControleur().nouvOuvrage(isbn, titre, editeur, dateEdition,
 						_noms);
-				_noms = null;
 			}
 		});
 		buttonEnreg.setBounds(302, 396, 107, 25);
@@ -204,6 +203,10 @@ public class VueSaisieOuvrage extends Vue {
 			i++;
 		}
 	}
+	
+	public void setNoms(HashMap<Integer, String> noms) {
+		_noms = noms;
+	}// Fin setAuteursCreer
 	
 	int genererNumAuteurCour() {
 		if (_noms.isEmpty())
