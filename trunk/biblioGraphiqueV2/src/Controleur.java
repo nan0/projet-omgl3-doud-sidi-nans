@@ -44,6 +44,7 @@ public class Controleur extends Observable implements Serializable{
 		private VueSaisiePeriodique _vueSaisiePeriodique = null;
 		private VueSaisieExemplaire _vueSaisieExemplaire = null;
 		private VueConsultOuvrage _vueConsultOuvrage = null;
+		private VueRechercheParAuteur _vueRechercheParAuteur = null;
 		private int incremente = 0;
 		// ************************************************************************************************************
 		// Constructeur
@@ -138,7 +139,9 @@ public class Controleur extends Observable implements Serializable{
 			_vueConsultOuvrage = vue;
 		}// Fin setVueVueConsultOuvrage
 		
-		
+		private void setVueRechercheParAuteur(VueRechercheParAuteur vue) {
+			_vueRechercheParAuteur = vue;
+		}// Fin setVueRechercheParAuteur
 		// ------------------------------------------------------------------------------------------------------------
 		// Accesseurs
 		
@@ -211,6 +214,10 @@ public class Controleur extends Observable implements Serializable{
 			return _vueConsultOuvrage ;
 		}// Fin getVueVueConsultOuvrage
 		
+		
+		private VueRechercheParAuteur getVueRechercheParAuteur() {
+			return _vueRechercheParAuteur ;
+		}// Fin  getVueRechercheParAuteur
 		
 		public int genererNumAuteur() {
 			if (this.getAuteurs().isEmpty())
@@ -297,7 +304,21 @@ public class Controleur extends Observable implements Serializable{
 			} catch (Exception e) {
 			e.printStackTrace();
 			}
-		}		
+		}
+		
+		
+		public void rechercheParAuteur() {
+			try {this.setVueRechercheParAuteur(new VueRechercheParAuteur(this));
+			// le Menu est caché
+			this.getVueMenuBiblio().getFrame().setVisible(false); 	
+			// la vue courante est VueConsultOuvrage
+				this.getVueRechercheParAuteur().setEtat(Vue.initiale);
+				this.getVueRechercheParAuteur().setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			
+			}
+		}
 		/**
 		 * fermeture de la fenêtre vue
 		 * lors de la fermeture de la fenêtre principale de l'application sauvegarde des objets sérialisés 
@@ -518,8 +539,25 @@ public class Controleur extends Observable implements Serializable{
 				}
 			}
 		}// Fin nouvPeriodique
-	} 
+	
 
 
+//Méthodes pour les recherches
+
+//public Ouvrage rechOuvragesAuteur(String aut) {
+	
+	//auteur = getAuteur(aut);
+	
+	//for (int i = 0; i < _auteurs.size(); i++) {
+	//	if(_auteurs(i).getNom() == aut){
+	//		this.getVueRechercheParAuteur().alimente(ouv);
+	//	}
+	//}
+	//
+	
+//} // Fin rechOuvragesAuteur
+
+
+}
 		
 

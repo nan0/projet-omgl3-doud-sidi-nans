@@ -46,6 +46,12 @@ public class Auteur extends Observable implements Serializable {
 	public void setNom(String nom){
 		_nom = nom;
 	}
+	
+	public HashMap<Integer, Document> getDocuments() {
+		return _documents;
+	}
+		
+	
 
 	
 	// ------------------------------------------------------------------------------------------------------------

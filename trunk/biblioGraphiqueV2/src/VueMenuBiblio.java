@@ -91,6 +91,7 @@ public class VueMenuBiblio  extends Vue{
 		
 		mnOuvrage.add(menuItemConsult);
 		
+		//Menu Périodiques
 		JMenu mnPeriodique = new JMenu("Periodique");
 		menuBar.add(mnPeriodique);
 		
@@ -104,6 +105,25 @@ public class VueMenuBiblio  extends Vue{
 	
 		mnPeriodique.add(mntmNouveauPeriodique);
 		frame.setVisible(true);
+		
+		
+		//Menu Recherches
+		JMenu mnRecherche = new JMenu("Recherche...");
+		menuBar.add(mnRecherche);
+		
+		JMenuItem mntmRechercheParAuteur = new JMenuItem("Par Auteur");
+		mntmRechercheParAuteur.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				//  affichage de la fenetre de saisie d'un periodique
+				getControleur().rechercheParAuteur() ;}
+		});
+	
+		mnRecherche.add(mntmRechercheParAuteur);
+		frame.setVisible(true);
+		
+		
+		
 	}
 	
 	/**
