@@ -2,6 +2,8 @@
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.io.Serializable;
+
 
 /**
  * Classe de gestion des Dates (affichages et saisies)
@@ -9,7 +11,7 @@ import java.util.GregorianCalendar;
  * @version 1.0
  *
  */
-public class ESDate  {
+public class ESDate  implements Serializable {
 
 	// ************************************************************************************************************
 	// Constantes

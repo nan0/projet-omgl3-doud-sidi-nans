@@ -47,14 +47,12 @@ public class VueSaisieOuvrage extends Vue {
 	private JButton buttonAnnuler;
 	private JButton btnAjouter;
 	private JTextField textFieldNom;
-	private JTextField textFieldPrenom;
 	private JLabel lblNom;
 	private HashMap<Integer, String> _noms;
 	private List list;
 	private HashMap<Integer, Auteur> listToutAuteurs;
 	private JScrollPane scrollPane;
-	private List list_1;
-	private boolean existe = false;
+	private boolean existeListe = false;
 
 	/**
 	 * Create the frame.
@@ -170,8 +168,8 @@ public class VueSaisieOuvrage extends Vue {
 			public void actionPerformed(ActionEvent e) {
 				String nom = textFieldNom.getText();
 				if (list.getSelectedItems() != null)
-					existe = true;
-				getControleur().ajouterAuteur(nom, existe);
+					existeListe = true;
+				getControleur().ajouterAuteur(nom, existeListe);
 			}
 		});
 		btnAjouter.setBounds(302, 327, 107, 25);
@@ -198,7 +196,7 @@ public class VueSaisieOuvrage extends Vue {
 			num = genererNumAuteurCour();
 			/*getControleur().setAuteur(auteur, num);*/
 			_noms.put(num, list.getSelectedItems()[i]);
-			Message dialog = new Message(list.getSelectedItems()[i]);
+			Message dialog = new Message(list.getSelectedItems()[i] + " a été ajouté !");
 			dialog.setVisible(true);
 			i++;
 		}

@@ -187,8 +187,14 @@ public class Controleur extends Observable implements Serializable{
 		 * @param issn 	le code ISSN du periodique cherché
 		 * @return le periodique qui a l'ISSN indiqué
 		 */
-		private Auteur getAuteur(int numero) {
-			return this.getAuteurs().get(numero);
+		private int existeAuteur(Auteur a) {
+			if (!(this.getAuteurs().isEmpty())) {
+				for (int i = 0; i < this.getAuteurs().size(); i++) {
+					if (a.getNom().compareTo(this.getAuteurs().get(i).getNom()) == 0)
+						return i;
+				}
+			} 
+			return -1;
 		} // Fin getPeriodique
 		
 		/**
@@ -221,16 +227,16 @@ public class Controleur extends Observable implements Serializable{
 		
 		public int genererNumAuteur() {
 			if (this.getAuteurs().isEmpty())
-				return 1;
+				return 0;
 			else
-				return (this.getAuteurs().size() + 1);
+				return (this.getAuteurs().size());
 		}
 		
 		public int genererNumAuteurCreer() {
 			if (this.getAuteursCreer().isEmpty())
-				return 1;
+				return 0;
 			else
-				return (this.getAuteursCreer().size() + 1);
+				return (this.getAuteursCreer().size());
 		}
 		
 		// ************************************************************************************************************
@@ -407,20 +413,17 @@ public class Controleur extends Observable implements Serializable{
 			}
 			return ouv;
 		} // Fin rechOuvrage
-		
-		public void ajouterAuteur(String nom, boolean existe) {
+	
+		public void ajouterAuteur(String nom, boolean existeListe) {
 			/* listAuteur.getSelectedValue(); */
 			if (nom.length() != 0) {
 				int num = this.getVueSaisieOuvrage().genererNumAuteurCour();
 				this.getVueSaisieOuvrage().getAuteursCour().put(num, nom);
-				num = this.genererNumAuteur();
-				Auteur auteur = new Auteur(nom);
-				_auteurs.put(num, auteur);
 				String mess = nom + " à été ajouté";
 				Message dialog = new Message(mess);
 				dialog.setVisible(true);
 				this.getVueSaisieOuvrage().reinitChampAuteur();
-			} else if (existe) {
+			} else if (existeListe) {
 				this.getVueSaisieOuvrage().recupAuteurs();
 			}
 		}
@@ -486,15 +489,23 @@ public class Controleur extends Observable implements Serializable{
 					Message dialog = new Message("Le format de la date est incorrect");
 					dialog.setVisible(true);
 					}
-				else if (this.getOuvrage(isbn )== null) {
+				else if (this.getOuvrage(isbn)== null) {
 				// Instanciation de l'ouvrage
-					int numC;
+					int numC, num;
 					this.setAuteursCreer(new HashMap<Integer, Auteur>());
 					Auteur auteur;
 					for (int i = 0; i < noms.size(); i++) {
 						numC = this.genererNumAuteurCreer();
 						auteur = new Auteur((noms.values().toArray())[i].toString());
-						_auteursCreer.put(numC, auteur);
+						numC = this.existeAuteur(auteur);
+						if (numC == -1) {
+							//this.getVueSaisieOuvrage().getAuteursCour().put(num, ((noms.values().toArray())[i].toString()));
+							num = this.genererNumAuteur();
+							_auteursCreer.put(num, auteur);
+							_auteurs.put(num, auteur);
+						} else {
+							_auteursCreer.put(numC, auteur);
+						}
 					}
 					Ouvrage ouvrage = new Ouvrage(isbn, titre, editeur, date, _auteursCreer);
 				// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
