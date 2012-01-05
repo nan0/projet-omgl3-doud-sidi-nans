@@ -106,6 +106,17 @@ public class VueMenuBiblio  extends Vue{
 		mnPeriodique.add(mntmNouveauPeriodique);
 		frame.setVisible(true);
 		
+		JMenuItem mntmNouvelleParution = new JMenuItem("Nouvelle Parution");
+		mntmNouvelleParution.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent event) {
+				//  affichage de la fenetre de saisie d'un periodique
+				getControleur().saisirParution() ;}
+		});
+	
+		mnPeriodique.add(mntmNouvelleParution);
+		frame.setVisible(true);
+		
 		
 		//Menu Recherches
 		JMenu mnRecherche = new JMenu("Recherche...");
