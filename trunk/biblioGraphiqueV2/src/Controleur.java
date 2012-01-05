@@ -42,6 +42,7 @@ public class Controleur extends Observable implements Serializable{
 		// permet de connaître l'état des fenêtres de l'interface
 		private VueSaisieOuvrage _vueSaisieOuvrage = null;
 		private VueSaisiePeriodique _vueSaisiePeriodique = null;
+		private VueSaisieParution _vueSaisieParution = null;
 		private VueSaisieExemplaire _vueSaisieExemplaire = null;
 		private VueConsultOuvrage _vueConsultOuvrage = null;
 		private VueRechercheParAuteur _vueRechercheParAuteur = null;
@@ -135,6 +136,10 @@ public class Controleur extends Observable implements Serializable{
 			_vueSaisieExemplaire = vue;
 		}// Fin setVueVueSaisieExemplaire
 		
+		private void setVueSaisieParution(VueSaisieParution vue) {
+			_vueSaisieParution = vue;
+		}// Fin setVueVueSaisieExemplaire
+		
 		private void setVueConsultOuvrage(VueConsultOuvrage vue) {
 			_vueConsultOuvrage = vue;
 		}// Fin setVueVueConsultOuvrage
@@ -161,7 +166,7 @@ public class Controleur extends Observable implements Serializable{
 			return this.getOuvrages().get(isbn);
 		} // Fin getOuvrage
 
-		private HashMap<String, Periodique> getPeriodiques() {
+		public HashMap<String, Periodique> getPeriodiques() {
 			return _periodiques;
 		}// Fin getPeriodiques
 		
@@ -214,6 +219,10 @@ public class Controleur extends Observable implements Serializable{
 		
 		private VueSaisieExemplaire getVueSaisieExemplaire() {
 			return _vueSaisieExemplaire ;
+		}// Fin getVueVueSaisieExemplaire
+		
+		private VueSaisieParution getVueSaisieParution() {
+			return _vueSaisieParution ;
 		}// Fin getVueVueSaisieExemplaire
 		
 		private VueConsultOuvrage getVueConsultOuvrage() {
@@ -307,6 +316,21 @@ public class Controleur extends Observable implements Serializable{
 			// la vue courante est VueSaisiePeridique
 				this.getVueSaisiePeriodique().setEtat(Vue.initiale);
 				this.getVueSaisiePeriodique().setVisible(true);
+			} catch (Exception e) {
+			e.printStackTrace();
+			}
+		}
+		
+		/**
+		 * Création et affichage de la fenêtre de saisie d'un ouvrage
+		 */
+		public void saisirParution() {
+			try {this.setVueSaisieParution(new VueSaisieParution(this));
+			// le Menu est caché
+			this.getVueMenuBiblio().getFrame().setVisible(false); 
+			// la vue courante est VueSaisiePeridique
+				this.getVueSaisieParution().setEtat(Vue.initiale);
+				this.getVueSaisieParution().setVisible(true);
 			} catch (Exception e) {
 			e.printStackTrace();
 			}
