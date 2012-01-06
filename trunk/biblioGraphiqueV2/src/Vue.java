@@ -1,6 +1,10 @@
 import javax.swing.JFrame;
 import java.util.Observable;
 import java.util.Observer;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 /**
  * Super classe des vues
  * @author IUT,  A.Culet 
@@ -17,6 +21,12 @@ public abstract class Vue extends JFrame implements Observer{
 	private int _etat;
 
 	public Vue(Controleur controleur) {
+		    addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+			getControleur().fermerVue(Vue.this);
+			}
+			});
 		this.setControleur(controleur);
 	}
 	
