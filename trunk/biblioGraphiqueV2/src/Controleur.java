@@ -45,6 +45,7 @@ public class Controleur extends Observable implements Serializable{
 		private VueSaisieParution _vueSaisieParution = null;
 		private VueSaisieExemplaire _vueSaisieExemplaire = null;
 		private VueConsultOuvrage _vueConsultOuvrage = null;
+		private VueConsulterPeriodique _vueConsulterPeriodique = null;
 		private VueRechercheParAuteur _vueRechercheParAuteur = null;
 		private int incremente = 0;
 		// ************************************************************************************************************
@@ -144,6 +145,10 @@ public class Controleur extends Observable implements Serializable{
 			_vueConsultOuvrage = vue;
 		}// Fin setVueVueConsultOuvrage
 		
+		private void setVueConsulterPeriodique(VueConsulterPeriodique vue) {
+			_vueConsulterPeriodique = vue;
+		}// Fin setVueVueConsultOuvrage
+		
 		private void setVueRechercheParAuteur(VueRechercheParAuteur vue) {
 			_vueRechercheParAuteur = vue;
 		}// Fin setVueRechercheParAuteur
@@ -175,7 +180,7 @@ public class Controleur extends Observable implements Serializable{
 		 * @param issn 	le code ISSN du periodique cherché
 		 * @return le periodique qui a l'ISSN indiqué
 		 */
-		private Periodique getPeriodique(String issn) {
+		public Periodique getPeriodique(String issn) {
 			return this.getPeriodiques().get(issn);
 		} // Fin getPeriodique
 		
@@ -221,7 +226,7 @@ public class Controleur extends Observable implements Serializable{
 			return _vueSaisieExemplaire ;
 		}// Fin getVueVueSaisieExemplaire
 		
-		private VueSaisieParution getVueSaisieParution() {
+		public VueSaisieParution getVueSaisieParution() {
 			return _vueSaisieParution ;
 		}// Fin getVueVueSaisieExemplaire
 		
@@ -229,6 +234,9 @@ public class Controleur extends Observable implements Serializable{
 			return _vueConsultOuvrage ;
 		}// Fin getVueVueConsultOuvrage
 		
+		public VueConsulterPeriodique getVueConsulterPeriodique() {
+			return _vueConsulterPeriodique ;
+		}// Fin getVueVueConsultOuvrage
 		
 		private VueRechercheParAuteur getVueRechercheParAuteur() {
 			return _vueRechercheParAuteur ;
@@ -278,6 +286,19 @@ public class Controleur extends Observable implements Serializable{
 				e.printStackTrace();
 			}
 		}
+		
+		public void consulterPeriodique() {
+			try {this.setVueConsulterPeriodique (new VueConsulterPeriodique(this));
+			// le Menu est caché
+			this.getVueMenuBiblio().getFrame().setVisible(false); 	
+			// la vue courante est VueConsultOuvrage
+				this.getVueConsulterPeriodique().setEtat(Vue.initiale);
+				this.getVueConsulterPeriodique().setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		/**
 		 * Création et affichage de la fenêtre de saisie d'un exemplaire d'ouvrage
 		 */
@@ -450,6 +471,44 @@ public class Controleur extends Observable implements Serializable{
 			} else if (existeListe) {
 				this.getVueSaisieOuvrage().recupAuteurs();
 			}
+		}
+		
+		public void ajouterAuteurArticle(String nom, boolean existeListe) {
+			/* listAuteur.getSelectedValue(); */
+			if (nom.length() != 0) {
+				int num = this.getVueSaisieParution().genererNumAuteurCour();
+				this.getVueSaisieParution().getAuteursCour().put(num, nom);
+				String mess = nom + " à été ajouté";
+				Message dialog = new Message(mess);
+				dialog.setVisible(true);
+				this.getVueSaisieParution().reinitChampAuteur();
+			} else if (existeListe) {
+				this.getVueSaisieParution().recupAuteurs();
+			}
+		}
+		
+		public void nouvArticle(Parution par, String page, String titre, HashMap<Integer, String> noms) {
+			int numC, num;
+			this.setAuteursCreer(new HashMap<Integer, Auteur>());
+			Auteur auteur;
+			for (int i = 0; i < noms.size(); i++) {
+				numC = this.genererNumAuteurCreer();
+				auteur = new Auteur((noms.values().toArray())[i].toString());
+				numC = this.existeAuteur(auteur);
+				if (numC == -1) {
+					//this.getVueSaisieOuvrage().getAuteursCour().put(num, ((noms.values().toArray())[i].toString()));
+					num = this.genererNumAuteur();
+					_auteursCreer.put(num, auteur);
+					_auteurs.put(num, auteur);
+				} else {
+					_auteursCreer.put(numC, auteur);
+				}
+			}
+		// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
+			par.ajouterArticle(page, titre, _auteursCreer);
+			Message dialog = new Message("Article enregistré");
+			dialog.setVisible(true);
+			this.getVueSaisieParution().setNoms(new HashMap<Integer, String>());
 		}
 		
 		/**
