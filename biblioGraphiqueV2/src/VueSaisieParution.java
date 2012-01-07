@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
  * @version 1.0
  */
 public class VueSaisieParution extends Vue {
-	private JTextField textFieldIssn;
+	private JTextField textFieldIdentification;
 	private JTextField textFieldTitre;
 	private JTextField textFieldPage;
 	private JTextField textFieldNomAut;
@@ -39,14 +39,20 @@ public class VueSaisieParution extends Vue {
 	private JButton btnAjouterAuteur;
 	private JButton btnAjouterArticle;
 	private JButton btnAnnuler2;
-	private JButton btnEnregistrer;
+	private JButton btnTerminer;
 	private HashMap<String, Periodique> listToutPeriodiques;
 	private HashMap<Integer, Auteur> listToutAuteurs;
 	private JScrollPane scrollPane, scrollPane2;
 	private List listPer;
+	private List listAut;
 
 	
 	private Periodique _per;
+	private Parution _par;
+	private String _identification;
+	private HashMap<Integer, String> _noms;
+	private boolean existeListe = false;
+	private ArrayList<String> tab;
 	
 	/**
 	 * Create the frame.
@@ -58,19 +64,22 @@ public class VueSaisieParution extends Vue {
 		setBounds(100, 100, 600, 650);
 		getContentPane().setLayout(null);
 
+		this.setAuteurs(new HashMap<Integer, String>());
+		
 		btnChoisir = new JButton("Choisir");
 		btnChoisir.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (listPer.getSelectedItem() != null) {
-					_per = getControleur().getPeriodique(listPer.getSelectedItem());
-					getControleur().getVueSaisieParution().setEtat(inter1);
+					String issn =  getControleur().getVueSaisieParution().getIssnChoisi();
+					_per = getControleur().getPeriodique(issn);
+					getControleur().getVueSaisieParution().setEtat(finale);
 				}
 			}
 		});
 		btnChoisir.setBounds(337, 99, 107, 25);
 		getContentPane().add(btnChoisir);
 		
-		JLabel lblNewLabel = new JLabel("Issn");
+		JLabel lblNewLabel = new JLabel("Identification");
 		lblNewLabel.setBounds(160, 152, 26, 15);
 		getContentPane().add(lblNewLabel);
 		
@@ -78,10 +87,10 @@ public class VueSaisieParution extends Vue {
 		lblNomPriodique.setBounds(82, 38, 104, 15);
 		getContentPane().add(lblNomPriodique);
 		
-		textFieldIssn = new JTextField();
-		textFieldIssn.setBounds(204, 150, 226, 19);
-		getContentPane().add(textFieldIssn);
-		textFieldIssn.setColumns(10);
+		textFieldIdentification = new JTextField();
+		textFieldIdentification.setBounds(204, 150, 226, 19);
+		getContentPane().add(textFieldIdentification);
+		textFieldIdentification.setColumns(10);
 		
 		JLabel lblNewLabel_1 = new JLabel("Titre Article");
 		lblNewLabel_1.setBounds(109, 436, 77, 15);
@@ -93,6 +102,17 @@ public class VueSaisieParution extends Vue {
 		textFieldTitre.setColumns(10);
 		
 		btnContinuer = new JButton("Continuer");
+		btnContinuer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (listPer.getSelectedItem() != null) {
+					_identification = textFieldIdentification.getText();
+					_par = new Parution(_per, _identification);
+					_per.ajouterParution(_identification, _par);
+					btnContinuer.setEnabled(false);
+					textFieldIdentification.setEnabled(false);
+				}
+			}
+		});
 		btnContinuer.setBounds(233, 193, 144, 25);
 		getContentPane().add(btnContinuer);
 		
@@ -112,6 +132,10 @@ public class VueSaisieParution extends Vue {
 		btnAjouterAuteur = new JButton("Ajouter Auteur");
 		btnAjouterAuteur.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String nom = textFieldNomAut.getText();
+				if (listAut.getSelectedItems() != null)
+					existeListe = true;
+				getControleur().ajouterAuteurArticle(nom, existeListe);
 			}
 		});
 		btnAjouterAuteur.setBounds(439, 387, 141, 25);
@@ -126,11 +150,32 @@ public class VueSaisieParution extends Vue {
 		lblNomEtPrenom.setBounds(89, 392, 97, 15);
 		getContentPane().add(lblNomEtPrenom);
 		
-		btnEnregistrer = new JButton("Enregistrer");
-		btnEnregistrer.setBounds(337, 575, 107, 25);
-		getContentPane().add(btnEnregistrer);
+		btnTerminer = new JButton("Terminer");
+		btnTerminer.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				setAuteurs(new HashMap<Integer, String>());
+				getControleur().fermerVue(VueSaisieParution.this);
+			}
+		});
+		btnTerminer.setBounds(337, 575, 107, 25);
+		getContentPane().add(btnTerminer);
 		
 		btnAjouterArticle = new JButton("Ajouter Article");
+		btnAjouterArticle.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String titre = textFieldTitre.getText();
+				String page = textFieldPage.getText();
+				if (!_noms.isEmpty() && !titre.isEmpty() && !page.isEmpty() && _par != null) {
+					getControleur().nouvArticle(_par, page, titre, _noms);
+					getControleur().getVueSaisieParution().setAuteurs(new HashMap<Integer, String>());
+					textFieldTitre.setText("");
+					textFieldPage.setText("");
+				} else {
+					Message dialog = new Message("Certaint champs n'ont pas étaient remplis !");
+					dialog.setVisible(true);
+				} 
+			}
+		});
 		btnAjouterArticle.setBounds(236, 517, 141, 25);
 		getContentPane().add(btnAjouterArticle);
 		
@@ -160,19 +205,24 @@ public class VueSaisieParution extends Vue {
 		scrollPane_2.setBounds(201, 12, 229, 71);
 		getContentPane().add(scrollPane_2);
 		
+		//List des periodique
 		
 		listToutPeriodiques = getControleur().getPeriodiques();
-		ArrayList<String> tab = new ArrayList<String>();
+		tab = new ArrayList<String>();
 		//Iterator it= tab.iterator(); 
-		for (int i = 0; i < listToutPeriodiques.size(); i = i + 1) {
-			tab.add(Integer.toString(i));
+		for (int i = listToutPeriodiques.size() - 1; i >= 0 ; i = i - 1) {
+			tab.add(((Periodique)listToutPeriodiques.values().toArray()[i]).getIssn());
 			tab.add(((Periodique)listToutPeriodiques.values().toArray()[i]).getNom());
 		}
 		listPer = new List();
+		int num = 0;
 		for (int i = 0; i < (tab.size() - 1); i = i + 2) {
-			listPer.add(tab.get(i+1), Integer.parseInt(tab.get(i)));
+			listPer.add(tab.get(i+1), num);
+			num++;
 		}
 		scrollPane_2.setViewportView(listPer);
+		
+		//List des auteurs
 		
 		listToutAuteurs = getControleur().getAuteurs();
 		ArrayList<String> tab2 = new ArrayList<String>();
@@ -181,7 +231,7 @@ public class VueSaisieParution extends Vue {
 			tab2.add(Integer.toString(i));
 			tab2.add(((Auteur)listToutAuteurs.values().toArray()[i]).getNom());
 		}
-		List listAut = new List();
+		listAut = new List();
 		listAut.setMultipleMode(true);
 		listAut.setMultipleSelections(true);
 		for (int i = 0; i < (tab2.size() - 1); i = i + 2) {
@@ -190,6 +240,51 @@ public class VueSaisieParution extends Vue {
 		scrollPane_1.setViewportView(listAut);
 		
 	}
+	
+	public String getIssnChoisi() {
+		String issn;
+		issn = tab.get(listPer.getSelectedIndex()+listPer.getSelectedIndex());
+		return issn;
+	}
+	
+	public void recupAuteurs() {
+		int num;
+		int i = 0;
+		while (i < (listAut.getSelectedItems().length)) {
+			num = genererNumAuteurCour();
+			/*getControleur().setAuteur(auteur, num);*/
+			_noms.put(num, listAut.getSelectedItems()[i]);
+			Message dialog = new Message(listAut.getSelectedItems()[i] + " a été ajouté !");
+			dialog.setVisible(true);
+			i++;
+		}
+	}
+	
+	public void setNoms(HashMap<Integer, String> noms) {
+		_noms = noms;
+	}// Fin setAuteursCreer
+	
+	int genererNumAuteurCour() {
+		if (_noms.isEmpty())
+			return 1;
+		else
+			return (_noms.size() + 1);
+	}
+	
+	public HashMap<Integer, String> getAuteursCour() {
+		return _noms;
+	}
+	
+	public void reinitChampAuteur() {
+		textFieldNomAut.setText("");
+	}
+	
+	/**
+	 * @param periodiques hashtable de periodique à affecter
+	 */
+	public void setAuteurs(HashMap<Integer, String> noms) {
+		_noms = noms;
+	}// Fin setPeriodiques
 	
 	public void setEtat (int etat){
 		switch (etat) {
@@ -200,35 +295,22 @@ public class VueSaisieParution extends Vue {
 				btnAjouterAuteur.setEnabled(false);
 				btnAjouterArticle.setEnabled(false);
 				btnAnnuler2.setEnabled(false);
-				btnEnregistrer.setEnabled(false);
-				textFieldIssn.setEnabled(false);
+				btnTerminer.setEnabled(false);
+				textFieldIdentification.setEnabled(false);
 				textFieldTitre.setEnabled(false);
 				textFieldPage.setEnabled(false);
 				textFieldNomAut.setEnabled(false);
 			break;
 			}
-			case inter1: {
-				btnChoisir.setEnabled(false);
-				btnAnnuler1.setEnabled(true);
-				btnContinuer.setEnabled(true);
-				btnAjouterAuteur.setEnabled(false);
-				btnAjouterArticle.setEnabled(false);
-				btnAnnuler2.setEnabled(false);
-				btnEnregistrer.setEnabled(false);
-				textFieldIssn.setEnabled(true);
-				textFieldTitre.setEnabled(false);
-				textFieldPage.setEnabled(false);
-				textFieldNomAut.setEnabled(false);
-			}
 			case finale: {
 				btnChoisir.setEnabled(false);
 				btnAnnuler1.setEnabled(false);
-				btnContinuer.setEnabled(false);
+				btnContinuer.setEnabled(true);
 				btnAjouterAuteur.setEnabled(true);
 				btnAjouterArticle.setEnabled(true);
 				btnAnnuler2.setEnabled(true);
-				btnEnregistrer.setEnabled(true);
-				textFieldIssn.setEnabled(true);
+				btnTerminer.setEnabled(true);
+				textFieldIdentification.setEnabled(true);
 				textFieldTitre.setEnabled(true);
 				textFieldPage.setEnabled(true);
 				textFieldNomAut.setEnabled(true);

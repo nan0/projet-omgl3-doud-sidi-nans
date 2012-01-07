@@ -107,9 +107,11 @@ public class Periodique extends Observable implements Serializable {
 	 * @param numero numero de l'exemplaire à insérer
 	 * @param exemplaire exemplaire à insérer
 	 */
-	private void setParution(String numerotation, Parution parution) {
+	public void setParution(String numerotation, Parution parution) {
 		_parutions.put(numerotation, parution);	
 	} // Fin setExemplaire
+	
+	
 
 
 	// ************************************************************************************************************
@@ -148,8 +150,8 @@ public class Periodique extends Observable implements Serializable {
 	 * getter de l'ensemble des parutions.
 	 * @return une collection de parutions
 	 */
-	public Collection<Parution> getParutions() {
-		return _parutions.values();
+	public HashMap<String, Parution> getParutions() {
+		return _parutions;
 	}
 
 	/**
@@ -168,16 +170,9 @@ public class Periodique extends Observable implements Serializable {
 	 * @param dateReception date à laquelle l'exemplaire a été reçu.
 	 * @return l'exemplaire ou null si la date de reception est antérieure à la date d'édition de l'ouvrage 
 	 */
-	public Parution ajouterParution(String numerotation) {
-		// Generation du numero chronologique de l'exemplaire
-		// Creation de l'exemplaire
-			Parution parution = new Parution(this.getIssn(), numerotation, this);
-		// liaison de l'ouvrage a l'exemplaire
-			this.setParution(numerotation, parution);
-		// notifie ses observateurs du changement
-			this.notifierObservateurs();
-			return parution;
-	} // Fin ajouterExemplaire
+	public void ajouterParution(String numerotation, Parution par) {
+			this.setParution(numerotation, par);
+	} 
 
 	/**
 	 * @param dateRecep
