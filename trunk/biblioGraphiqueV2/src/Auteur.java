@@ -24,7 +24,7 @@ public class Auteur extends Observable implements Serializable {
 	 * @param prenom		prenom de l'auteur
 	 */
 	public Auteur(String nom) {
-		
+		this.setDocuments(new HashMap<Integer, Document>());
 		this.setNom(nom);
 	} // Fin Constructeur
 	
@@ -50,8 +50,22 @@ public class Auteur extends Observable implements Serializable {
 	public HashMap<Integer, Document> getDocuments() {
 		return _documents;
 	}
-		
 	
+	private void setDocuments(HashMap<Integer, Document> docs) {
+		_documents = docs;
+	}
+	
+	public void setDocument(Document doc) {
+		int i = genererNumDocument();
+		_documents.put(i, doc);
+	}
+	
+	public int genererNumDocument() {
+		if (this.getDocuments().isEmpty())
+			return 0;
+		else
+			return (this.getDocuments().size());
+	}
 
 	
 	// ------------------------------------------------------------------------------------------------------------
