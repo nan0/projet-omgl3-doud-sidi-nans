@@ -188,6 +188,10 @@ public class Controleur extends Observable implements Serializable{
 			return _auteurs;
 		}// Fin getPeriodiques
 		
+		public Auteur getAuteur(int key) {
+			return _auteurs.get(key);
+		}// Fin getPeriodiques
+		
 		public HashMap<Integer, Auteur> getAuteursCreer() {
 			return _auteursCreer;
 		}// Fin getPeriodiques
@@ -197,7 +201,7 @@ public class Controleur extends Observable implements Serializable{
 		 * @param issn 	le code ISSN du periodique cherché
 		 * @return le periodique qui a l'ISSN indiqué
 		 */
-		private int existeAuteur(Auteur a) {
+		public int existeAuteur(Auteur a) {
 			if (!(this.getAuteurs().isEmpty())) {
 				for (int i = 0; i < this.getAuteurs().size(); i++) {
 					if (a.getNom().compareTo(this.getAuteurs().get(i).getNom()) == 0)
@@ -505,7 +509,13 @@ public class Controleur extends Observable implements Serializable{
 				}
 			}
 		// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
-			par.ajouterArticle(page, titre, _auteursCreer);
+			int no = par.genererNumArticle();
+			Article art = new Article(par, page, titre, _auteursCreer);
+			for (int mapKey : _auteursCreer.keySet()) {
+				int no2 = existeAuteur(_auteursCreer.get(mapKey));
+				_auteurs.get(no2).setDocument(art);
+			}
+			par.setArticle(no, art);
 			Message dialog = new Message("Article enregistré");
 			dialog.setVisible(true);
 			this.getVueSaisieParution().setNoms(new HashMap<Integer, String>());
@@ -578,7 +588,6 @@ public class Controleur extends Observable implements Serializable{
 					this.setAuteursCreer(new HashMap<Integer, Auteur>());
 					Auteur auteur;
 					for (int i = 0; i < noms.size(); i++) {
-						numC = this.genererNumAuteurCreer();
 						auteur = new Auteur((noms.values().toArray())[i].toString());
 						numC = this.existeAuteur(auteur);
 						if (numC == -1) {
@@ -592,6 +601,10 @@ public class Controleur extends Observable implements Serializable{
 					}
 					Ouvrage ouvrage = new Ouvrage(isbn, titre, editeur, date, _auteursCreer);
 				// Ajout de l'ouvrage dans l'ensemble des ouvrages de la bibliothèque
+					for (int mapKey : _auteursCreer.keySet()) {
+						int no = existeAuteur(_auteursCreer.get(mapKey));
+						_auteurs.get(no).setDocument(ouvrage);
+					}
 					this.setOuvrage(ouvrage, isbn);
 					Message dialog = new Message("Ouvrage enregistré");
 					dialog.setVisible(true);
@@ -633,25 +646,6 @@ public class Controleur extends Observable implements Serializable{
 				}
 			}
 		}// Fin nouvPeriodique
-	
-
-
-//Méthodes pour les recherches
-
-//public Ouvrage rechOuvragesAuteur(String aut) {
-	
-	//auteur = getAuteur(aut);
-	
-	//for (int i = 0; i < _auteurs.size(); i++) {
-	//	if(_auteurs(i).getNom() == aut){
-	//		this.getVueRechercheParAuteur().alimente(ouv);
-	//	}
-	//}
-	//
-	
-//} // Fin rechOuvragesAuteur
-
-
 }
 		
 

@@ -62,6 +62,11 @@ ouvrage dont cet exemplaire est un représentant.
 	private void setId(String id) {
 		_id = id;
 	}
+
+
+	public void setArticle(int key, Article article) {
+		_articles.put(key, article);
+	}
 	
 	private void setArticles(HashMap<Integer, Article> articles) {
 		_articles = articles;
@@ -96,10 +101,5 @@ ouvrage dont cet exemplaire est un représentant.
 			return (this.getArticles().size());
 	}
 	
-	public void ajouterArticle(String page, String titre, HashMap<Integer, Auteur> auteurs) {
-		int num = genererNumArticle();
-		Article art = new Article(this, page, titre, auteurs);
-		_articles.put(num, art);
-	}
 
 } // Fin Classe Exemplaire
