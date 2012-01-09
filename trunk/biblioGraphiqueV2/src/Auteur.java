@@ -35,10 +35,7 @@ public class Auteur extends Observable implements Serializable {
 	// ------------------------------------------------------------------------------------------------------------
 	// Affecteurs
 	
-	/**
-	 * setter de l'attribut nom
-	 * @param nom nom de l'auteur
-	 */
+	
 	public String toString() {
 		return this.getNom();
 	}
@@ -71,10 +68,6 @@ public class Auteur extends Observable implements Serializable {
 	// ------------------------------------------------------------------------------------------------------------
 	// Accesseurs
 		
-	/**
-	 * Getter du nom
-	 * @return nom de l'auteur
-	 */
 	public String getNom() {
 		return _nom;
 	}

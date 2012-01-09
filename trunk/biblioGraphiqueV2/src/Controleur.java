@@ -13,7 +13,6 @@ import java.io.ObjectOutputStream;
  * @version 1.0 
  */
 
-//public class Controleur extends Observable implements Serializable{
 public class Controleur extends Observable implements Serializable{
 	
 	private static final long serialVersionUID = 1L;
@@ -47,7 +46,6 @@ public class Controleur extends Observable implements Serializable{
 		private VueConsultOuvrage _vueConsultOuvrage = null;
 		private VueConsulterPeriodique _vueConsulterPeriodique = null;
 		private VueRechercheParAuteur _vueRechercheParAuteur = null;
-		private int incremente = 0;
 		// ************************************************************************************************************
 		// Constructeur
 		// ************************************************************************************************************
@@ -99,20 +97,20 @@ public class Controleur extends Observable implements Serializable{
 		}// Fin setPeriodiques
 		
 		/**
-		 * Ajoute un Periodique à l'ensemble des periodiques de la bibliothèque.
-		 * @param periodique periodique à ajouter
-		 * @param issn 	code ISSN de cet ouvrage
+		 * Ajoute un Auteur à l'ensemble des auteurs de la bibliothèque.
+		 * @param auteur auteur à ajouter
+		 * @param numero
 		 */
 		public void setAuteur(Auteur auteur, int numero) {
 			this.getAuteurs().put(numero, auteur);
-		} // Fin setPeriodique
+		} // Fin setAuteur
 
 		/**
-		 * @param periodiques hashtable de periodique à affecter
+		 * @param auteurs hashtable d'auteur à affecter
 		 */
 		public void setAuteurs(HashMap<Integer, Auteur> auteurs) {
 			_auteurs = auteurs;
-		}// Fin setPeriodiques
+		}// Fin setAuteurs
 		
 		public void setAuteursCreer(HashMap<Integer, Auteur> auteursCreer) {
 			_auteursCreer = auteursCreer;
@@ -131,7 +129,7 @@ public class Controleur extends Observable implements Serializable{
 		
 		private void setVueSaisiePeriodique(VueSaisiePeriodique vue) {
 			_vueSaisiePeriodique = vue;
-		}// Fin setVueVueSaisieOuvrage
+		}// Fin setVueVueSaisiePeriodique
 		
 		private void setVueSaisieExemplaire(VueSaisieExemplaire vue) {
 			_vueSaisieExemplaire = vue;
@@ -139,7 +137,7 @@ public class Controleur extends Observable implements Serializable{
 		
 		private void setVueSaisieParution(VueSaisieParution vue) {
 			_vueSaisieParution = vue;
-		}// Fin setVueVueSaisieExemplaire
+		}// Fin setVueVueSaisieParution
 		
 		private void setVueConsultOuvrage(VueConsultOuvrage vue) {
 			_vueConsultOuvrage = vue;
@@ -147,7 +145,7 @@ public class Controleur extends Observable implements Serializable{
 		
 		private void setVueConsulterPeriodique(VueConsulterPeriodique vue) {
 			_vueConsulterPeriodique = vue;
-		}// Fin setVueVueConsultOuvrage
+		}// Fin setVueVueConsultPeriodique
 		
 		private void setVueRechercheParAuteur(VueRechercheParAuteur vue) {
 			_vueRechercheParAuteur = vue;
@@ -186,21 +184,16 @@ public class Controleur extends Observable implements Serializable{
 		
 		public HashMap<Integer, Auteur> getAuteurs() {
 			return _auteurs;
-		}// Fin getPeriodiques
+		}// Fin getAuteurs
 		
 		public Auteur getAuteur(int key) {
 			return _auteurs.get(key);
-		}// Fin getPeriodiques
+		}// Fin getAuteur
 		
 		public HashMap<Integer, Auteur> getAuteursCreer() {
 			return _auteursCreer;
-		}// Fin getPeriodiques
+		}// Fin getAuteursCreer
 		
-		/**
-		 * Accès à un Periodique par son numéro ISSN
-		 * @param issn 	le code ISSN du periodique cherché
-		 * @return le periodique qui a l'ISSN indiqué
-		 */
 		public int existeAuteur(Auteur a) {
 			if (!(this.getAuteurs().isEmpty())) {
 				for (int i = 0; i < this.getAuteurs().size(); i++) {
@@ -209,7 +202,7 @@ public class Controleur extends Observable implements Serializable{
 				}
 			} 
 			return -1;
-		} // Fin getPeriodique
+		} // Fin existeAuteur
 		
 		/**
 		 * @return la vue  
@@ -232,7 +225,7 @@ public class Controleur extends Observable implements Serializable{
 		
 		public VueSaisieParution getVueSaisieParution() {
 			return _vueSaisieParution ;
-		}// Fin getVueVueSaisieExemplaire
+		}// Fin getVueVueSaisieParution
 		
 		private VueConsultOuvrage getVueConsultOuvrage() {
 			return _vueConsultOuvrage ;
@@ -240,7 +233,7 @@ public class Controleur extends Observable implements Serializable{
 		
 		public VueConsulterPeriodique getVueConsulterPeriodique() {
 			return _vueConsulterPeriodique ;
-		}// Fin getVueVueConsultOuvrage
+		}// Fin getVueVueConsulterPeriodique
 		
 		private VueRechercheParAuteur getVueRechercheParAuteur() {
 			return _vueRechercheParAuteur ;
@@ -332,7 +325,7 @@ public class Controleur extends Observable implements Serializable{
 			}
 		}
 		/**
-		 * Création et affichage de la fenêtre de saisie d'un ouvrage
+		 * Création et affichage de la fenêtre de saisie d'un periodique
 		 */
 		public void saisirPeriodique() {
 			try {this.setVueSaisiePeriodique(new VueSaisiePeriodique(this));
@@ -347,7 +340,7 @@ public class Controleur extends Observable implements Serializable{
 		}
 		
 		/**
-		 * Création et affichage de la fenêtre de saisie d'un ouvrage
+		 * Création et affichage de la fenêtre de saisie d'une parution
 		 */
 		public void saisirParution() {
 			try {this.setVueSaisieParution(new VueSaisieParution(this));
