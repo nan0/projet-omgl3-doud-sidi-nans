@@ -154,6 +154,8 @@ public class VueSaisieParution extends Vue {
 		btnTerminer.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				setAuteurs(new HashMap<Integer, String>());
+				Message dialog = new Message("Parution enregistrée");
+				dialog.setVisible(true);
 				getControleur().fermerVue(VueSaisieParution.this);
 			}
 		});
